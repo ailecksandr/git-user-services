@@ -1,4 +1,5 @@
-require_relative 'lib/loader'
+ROOT_PATH = File.dirname(__FILE__)
 
-Lib::Loader.()
-Change::Process.()
+require File.join(ROOT_PATH, 'lib/loader')
+
+Lib::Loader.(ROOT_PATH)

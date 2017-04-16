@@ -32,7 +32,7 @@ module Change
     end
 
     def read!
-      puts File.read(file_path)
+      File.read(file_path)
     end
 
     def write!
@@ -51,4 +51,3 @@ module Change
     end
   end
 end
-

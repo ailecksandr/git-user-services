@@ -1,11 +1,15 @@
 module Lib
   class Loader
     class << self
-      def call
+      def call(root_path)
+        @root_path = root_path
+
         require!
       end
 
       private
+
+      attr_reader :root_path
 
       def require!
         app_folders.each { |folder| require_folder(folder) }
@@ -20,7 +24,7 @@ module Lib
       end
 
       def path(folder)
-        File.join('.', "#{folder}/**/*.rb")
+        File.join(root_path, "#{folder}/**/*.rb")
       end
     end
   end

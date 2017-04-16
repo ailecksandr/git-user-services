@@ -1,5 +1,3 @@
-require '../application'
+require_relative '../application'
 
-params = {}
-
-Change::Perform.(params)
+Change::Process.()

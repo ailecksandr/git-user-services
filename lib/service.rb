@@ -14,14 +14,14 @@ module Lib
       @errors = Error::Collection.new
 
       validate!
-      return invalid_params! unless valid?
+      return invalid_params! unless service_valid?
 
       call
     end
 
     def validate!; end
 
-    def valid?
+    def service_valid?
       errors.empty?
     end
 
