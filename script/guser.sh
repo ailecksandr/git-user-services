@@ -1,3 +1,3 @@
 #!/bin/bash
 
-ruby guser.rb
+ruby guser.rb $1

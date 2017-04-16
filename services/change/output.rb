@@ -1,5 +1,5 @@
 module Change
-  class Output < Lib::Service
+  class Output < Service
     def initialize(params = {})
       @text   = params[:text]
       @silent = params[:silent]

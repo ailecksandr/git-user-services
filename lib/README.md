@@ -12,6 +12,9 @@ Base service that provides functional-way execution and params validations.
 ### Concerns::StateMachine
 Module that provides common state machine and state machine with multiple field states.
 
+### Path
+Class that parse and wrap file/folder `path` and `name`.
+
 ### Error
 Base class for errors implementation. Errors requires:
 - `column` - service attribute name;
@@ -29,16 +32,3 @@ Class that contains constants of types of errors. Additional options for errors 
 |BLANK       |---                       |
 |INVALID_TYPE|`class_name` - valid class|
 |NOT_INCLUDED|`in` - valid collection   |
-
-
-
-
-
-
-
-
-
-
-
-
-

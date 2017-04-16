@@ -1,5 +1,5 @@
 module Change
-  class Replacer < Lib::Service
+  class Replacer < Service
     def initialize(params = {})
       @config  = params[:config]
       @borders = params[:borders]
@@ -11,16 +11,18 @@ module Change
       init_field_states!(fields)
       replace!
       check!
+      check_ssh!
 
       config
     end
 
     private
 
-    STATES = [:initialized, :commented, :replaced]
+    STATES                 = [:initialized, :commented, :replaced]
+    SSH_FOLDER_NAME_COLUMN = :email
     multi_state_machine :field_states, STATES
 
-    attr_reader :config, :borders, :fields, :silent
+    attr_reader :config, :borders, :fields, :ssh_replaced, :silent
 
     def validate!
       errors.add(:config, Error::Type::INVALID_TYPE, class_name: Array) unless config.is_a?(Array)
@@ -38,6 +40,12 @@ module Change
       fields.each { |field| nothing_changed!(field) if initialized?(field) }
     end
 
+    def check_ssh!
+      return ssh_replaced! if ssh_replaced
+
+      ssh_not_replaced!
+    end
+
     def change_row!(index)
       fields.each { |field| replace(index, field) }
     end
@@ -48,12 +56,18 @@ module Change
       case
       when config[index].include?(patterns[:commented]) && commented?(field)
         config[index].gsub!(patterns[:commented], patterns[:uncommented])
-        inform!(field, config[index].split('=').last.lstrip)
+        value = config[index].split('=').last.lstrip
+        replace_ssh!(value) if field == SSH_FOLDER_NAME_COLUMN
+        inform!(field, value)
         replaced!(field)
       when config[index].include?(patterns[:uncommented]) && not_commented?(field)
         config[index].gsub!(patterns[:uncommented], patterns[:commented])
         commented!(field) if not_replaced?(field)
       end
+    end
+
+    def replace_ssh!(value)
+      @ssh_replaced = Change::SSHReplacer.(name: value)
     end
 
     def patterns(field)
@@ -65,6 +79,14 @@ module Change
 
     def inform!(field, value)
       Output.(text: "## #{decorated_field(field)} was replaced to #{value} ##", silent: silent)
+    end
+
+    def ssh_replaced!
+      Output.(text: '## SSH keys were replaced ##', silent: silent)
+    end
+
+    def ssh_not_replaced!
+      Output.(text: '## SSH keys were not replaced ##', silent: silent)
     end
 
     def nothing_changed!(field)

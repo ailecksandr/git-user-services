@@ -1,5 +1,5 @@
 module Change
-  class SectionFinder < Lib::Service
+  class SectionFinder < Service
     def initialize(params = {})
       @name   = params[:name]
       @config = params[:config]

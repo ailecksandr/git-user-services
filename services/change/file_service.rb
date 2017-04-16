@@ -1,5 +1,5 @@
 module Change
-  class FileService < Lib::Service
+  class FileService < Service
     def initialize(params = {})
       @file_path = params[:file_path]
       @action    = params[:action]
@@ -8,7 +8,6 @@ module Change
     end
 
     def call
-      prepare!
       return read! if action == READ_ACTION
 
       write!
@@ -27,27 +26,23 @@ module Change
       errors.add(:data, Error::Type::BLANK)                                 if action == WRITE_ACTION && data.nil?
     end
 
-    def prepare!
-      @file_path.gsub!('~/', "#{ENV['HOME']}/")
-    end
-
     def read!
-      File.read(file_path)
+      File.read(path)
     end
 
     def write!
-      File.open(file_path, 'w') { |file| file.puts(data) }
-      Output.(text: "## <#{file_name}> was changed successfully! ##", silent: silent)
+      File.open(path, 'w') { |file| file.puts(data) }
+      Output.(text: "## <#{path.name}> was changed successfully! ##", silent: silent)
     rescue
       Output.(text: '## Read-only access! ##', silent: silent)
     end
 
-    def actions
-      @actions ||= [READ_ACTION, WRITE_ACTION]
+    def path
+      @path ||= Path.new(file_path)
     end
 
-    def file_name
-      @file_name ||= file_path.split('/').last
+    def actions
+      @actions ||= [READ_ACTION, WRITE_ACTION]
     end
   end
 end

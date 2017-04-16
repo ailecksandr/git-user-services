@@ -1,5 +1,5 @@
 module Change
-  class Process < Lib::Service
+  class Process < Service
     def initialize(params = {})
       @silent  = params[:silent]
     end
